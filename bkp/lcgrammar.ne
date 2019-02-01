@@ -1,6 +1,7 @@
 #bits of this taken from https://github.com/kach/nearley/blob/master/examples/lua.ne
 
-# nearleyc lcgrammar.ne -o lcgrammar.js
+
+
 
 block -> _ statement _
 

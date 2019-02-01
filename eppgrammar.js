@@ -1,12 +1,12 @@
-// Generated automatically by nearley, version 2.15.1
+// Generated automatically by nearley, version 2.16.0
 // http://github.com/Hardmath123/nearley
 (function () {
 function id(x) { return x[0]; }
 
-const moo = require("moo");
+const moo = require("moo"); // this 'require' creates a node dependency
 
 const lexer = moo.compile({
-  functionkeyword: ['sinosc'],
+  functionkeyword: ['sinosc','add'],
   functionname: /[a-zA-Z][a-zA-Z0-9]*/,
   number: /[-+]?[0-9]*\.[0-9]+/,
   ws:     /[ \t\v\f]/,

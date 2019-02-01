@@ -1,5 +1,5 @@
 @{%
-const moo = require("moo");
+const moo = require("moo"); // this 'require' creates a node dependency
 
 const lexer = moo.compile({
   functionkeyword: ['sinosc','add'],
