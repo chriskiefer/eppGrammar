@@ -3,15 +3,19 @@
 
 Compile eppgrammar files to a JavaScript module
 ```
-$ nearleyc eppgrammar.ne -o eppgrammar.js
+$ nearleyc eppgrammar.ne -o eppprocessor.js
 ```
 
-Test a eppgrammar against input
+Test eppprocessor against input
 ```
-$ nearley-test ./eppgrammar.js --input 'sinosc(2.0)'
+$ nearley-test ./eppprocessor.js --input 'sinosc(2.0)'
 ```
 
 Generate a railroad diagram for eppgrammar
 ```
 $ nearley-railroad eppgrammar.ne -o eppgrammar.html
 ```
+
+
+## License
+MIT
