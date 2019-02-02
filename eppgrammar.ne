@@ -26,7 +26,8 @@ func ->
 
 
 
-# Numbers — defining our rules can be more efficient that using builtins
+# Numbers —  builtins make your parser slower. for efficiency, you would want to switch to a lexer
+
 
 Number -> _number {% function(d) {return {'literal': parseFloat(d[0])}} %}
 
