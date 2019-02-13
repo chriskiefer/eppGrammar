@@ -71,17 +71,9 @@ Functions ->
             %functionkeyword _ %bindr _ Functions {% d => [d[0]].concat(d[4]) %}
             | %functionkeyword                 {% id %}
 
-Loop -> "[" Beats "]" {%
-                      function(d) {
-                        return { "@loop": d[1] };
-                      }
-                      %}
+Loop -> "[" Beats "]" {% d => ({ "@loop": d[1] }); %}
 
-Beats -> Beat:+ {%
-                function(d) {
-                  return { "@beats": d[0].join() };
-                }
-                %}
+Beats -> Beat:+ {% d => ({ "@beats": d[0].join() }); %}
 
 Beat ->
     Rest          {% id %}
