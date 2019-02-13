@@ -60,20 +60,19 @@ Synth -> Params _ %bindr _ Functions  {% d => ({
                                                   "@params": d[0],
                                                   "@functions": d[4]
                                                 }
-                                              })
-                                      %}
+                                              }) %}
 
 Params ->
         %number _ %pipe _ Params  {% d =>  [ parseFloat(d[0]), d[4] ] %}
         | %number {% d => parseFloat(d[0]) %}
 
 Functions ->
-            %functionkeyword _ %bindr _ Functions {% d => [d[0]].concat(d[4]) %}
-            | %functionkeyword                 {% id %}
+            %functionkeyword _ %bindr _ Functions {% d => [ d[0] ].concat(d[4]) %}
+            | %functionkeyword {% d => d[0] %}
 
-Loop -> "[" Beats "]" {% d => ({ "@loop": d[1] }); %}
+Loop -> "[" Beats "]" {% d => ({ "@loop": d[1] }) %}
 
-Beats -> Beat:+ {% d => ({ "@beats": d[0].join() }); %}
+Beats -> Beat:+ {% d => ({ "@beats": d[0].join() }) %}
 
 Beat ->
     Rest          {% id %}

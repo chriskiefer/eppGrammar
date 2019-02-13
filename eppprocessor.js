@@ -48,24 +48,15 @@ var grammar = {
             "@params": d[0],
             "@functions": d[4]
           }
-        })
-                                              },
+        }) },
     {"name": "Params", "symbols": [(lexer.has("number") ? {type: "number"} : number), "_", (lexer.has("pipe") ? {type: "pipe"} : pipe), "_", "Params"], "postprocess": d =>  [ parseFloat(d[0]), d[4] ]},
     {"name": "Params", "symbols": [(lexer.has("number") ? {type: "number"} : number)], "postprocess": d => parseFloat(d[0])},
-    {"name": "Functions", "symbols": [(lexer.has("functionkeyword") ? {type: "functionkeyword"} : functionkeyword), "_", (lexer.has("bindr") ? {type: "bindr"} : bindr), "_", "Functions"], "postprocess": d => [d[0]].concat(d[4])},
-    {"name": "Functions", "symbols": [(lexer.has("functionkeyword") ? {type: "functionkeyword"} : functionkeyword)], "postprocess": id},
-    {"name": "Loop", "symbols": [{"literal":"["}, "Beats", {"literal":"]"}], "postprocess": 
-        function(d) {
-          return { "@loop": d[1] };
-        }
-        },
+    {"name": "Functions", "symbols": [(lexer.has("functionkeyword") ? {type: "functionkeyword"} : functionkeyword), "_", (lexer.has("bindr") ? {type: "bindr"} : bindr), "_", "Functions"], "postprocess": d => [ d[0] ].concat(d[4])},
+    {"name": "Functions", "symbols": [(lexer.has("functionkeyword") ? {type: "functionkeyword"} : functionkeyword)], "postprocess": d => d[0].offset},
+    {"name": "Loop", "symbols": [{"literal":"["}, "Beats", {"literal":"]"}], "postprocess": d => ({ "@loop": d[1] })},
     {"name": "Beats$ebnf$1", "symbols": ["Beat"]},
     {"name": "Beats$ebnf$1", "symbols": ["Beats$ebnf$1", "Beat"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-    {"name": "Beats", "symbols": ["Beats$ebnf$1"], "postprocess": 
-        function(d) {
-          return { "@beats": d[0].join() };
-        }
-        },
+    {"name": "Beats", "symbols": ["Beats$ebnf$1"], "postprocess": d => ({ "@beats": d[0].join() })},
     {"name": "Beat", "symbols": ["Rest"], "postprocess": id},
     {"name": "Beat", "symbols": ["Hat"], "postprocess": id},
     {"name": "Beat", "symbols": ["Snare"], "postprocess": id},
