@@ -90,8 +90,10 @@ Synth ->
       | Function                                              {% d => ({ "@func": d[0] }) %}
 
 Effects ->
-        %functionkeyword _ Params _ %colon _ Effects          {% d => [ Object.assign({}, d[0].text.toString(), { param: d[2]}) ].concat(d[6]) %}
-        | %functionkeyword _ Params                           {% d => Object.assign({}, d[0].toString(), { param: d[2]}) %}
+        %functionkeyword _ Params _ %colon _ Effects          {% d => [ Object.assign({}, {type:d[0].value} , { param: d[2]}) ].concat(d[6]) %}
+          # ( console.log(d[0].value) ) %}
+        | %functionkeyword _ Params                           {% d => ( Object.assign({}, {type:d[0].value}, { param: d[2]} )) %}
+        # | %functionkeyword _ Params                           {% d => ( d[0].value: [{param: d[2]}) %}
 
 
 Function ->
