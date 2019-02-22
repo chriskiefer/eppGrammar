@@ -91,10 +91,7 @@ Synth ->
 
 Effects ->
         %functionkeyword _ Params _ %colon _ Effects          {% d => [ Object.assign({}, {type:d[0].value} , { param: d[2]}) ].concat(d[6]) %}
-          # ( console.log(d[0].value) ) %}
         | %functionkeyword _ Params                           {% d => ( Object.assign({}, {type:d[0].value}, { param: d[2]} )) %}
-        # | %functionkeyword _ Params                           {% d => ( d[0].value: [{param: d[2]}) %}
-
 
 Function ->
       Oscillator _ %lparen _ Function _ %rparen               {% d => ({ "@rec": [d[0]].concat(d[4])}) %}
@@ -104,7 +101,6 @@ Function ->
       | Oscillator _ Params                                   {% d => Object.assign({}, d[0], { param: d[2]}) %}
 
 Oscillator ->
-    # %osc _ Sinewave {% id %}
     %osc _ Sinewave                                           {% d => ({ "@osc": "sin" }) %}
     | %osc _ Coswave                                          {% d => ({ "@osc": "@cos" }) %}
     | %osc _ Phasor                                           {% d => ({ "@osc": "@pha" }) %}
@@ -113,11 +109,6 @@ Oscillator ->
     | %osc _ Square                                           {% d => ({ "@osc": "@square" }) %}
     | %osc _ Pulse                                            {% d => ({ "@osc": "@pulse" }) %}
     | %osc _ Noise                                            {% id %}
-
-        # | %number _ %pipe _ Params  {% d =>  [ parseFloat(d[0]), d[4] ] %}
-        # | %lbrack Params %rbrack {% d =>  %}
-        # | %number {% d => parseFloat(d[0]) %}
-
 
 Sinewave -> %sinosc     {% id %}
 Coswave -> %cososc      {% id %}
@@ -136,37 +127,9 @@ Params -> %lbrack _ %number:+ _ %rbrack        {% d => console.log(d[2])  %}
 
 
 
-
-# Synths -> %lbrack Synth %rbrack
-
-# Synth -> Params _ %bindr _ Functions  {% d => ({
-#                                                 "@synth": {
-#                                                   "@params": d[0],
-#                                                   "@functions": d[4]
-#                                                 }
-#                                               }) %}
-
-
-# Functions ->
-#             %functionkeyword _ %bindr _ Functions {% d => [ d[0] ].concat(d[4]) %}
-#             | %functionkeyword {% d => d[0] %}
-
-
-
 # Whitespace
 
 _  -> wschar:* {% function(d) {return null;} %}
 __ -> wschar:+ {% function(d) {return null;} %}
 
 wschar -> %ws {% id %}
-
-@{%
-
-function extend(obj, src) {
-  for (var key in src) {
-    if (src.hasOwnProperty(key)) obj[key] = src[key];
-  }
-  return obj;
-}
-
-%}
