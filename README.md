@@ -15,6 +15,10 @@ $ nearley-test ./eppprocessor.js --input 'xo.-.xo;'                             
 $ nearley-test ./eppprocessor.js --input '3 | 2  >> sinosc;'                    # One line with a Synth
 
 $ nearley-test ./eppprocessor.js --input '[xo.-.xo]  ; x.ox.-x.-; 10 | 3 | 2  >> sinosc >> sinosc; [x.-o.-.o-x]'     # Multiline with Loops, Beats and Synth
+
+$ nearley-test ./eppprocessor.js --input 'tpb 12'                               # One line with a Loop
+
+$ nearley-test ./eppprocessor.js --input '[xo.-.xo]; x.-ox.o- ; [xo-o.x.o-]; tpb 12 ;'
 ```
 
 Generate a railroad diagram for eppgrammar
