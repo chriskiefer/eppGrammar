@@ -4,52 +4,52 @@
 const moo = require("moo"); // this 'require' creates a node dependency
 
 const lexer = moo.compile({
-  osc:        ['osc'],
-  sinosc:     ['sin'],
-  cososc:     ['cos'],
-  sawosc:     ['saw'],
-  triosc:     ['tri'],
-  phasosc:    ['phasor'],
-  squareosc:  ['square'],
-  pulseosc:   ['pulse'],
-  wnoise:     ['wnoise'],
-  pnoise:     ['pnoise'],
-  bnoise:     ['bnoise'],
-  tpb:        ['tpb'],
+  osc:          ['osc'],
+  sinosc:       ['sin'],
+  cososc:       ['cos'],
+  sawosc:       ['saw'],
+  triosc:       ['tri'],
+  phasosc:      ['phasor'],
+  squareosc:    ['square'],
+  pulseosc:     ['pulse'],
+  wnoise:       ['wnoise'],
+  pnoise:       ['pnoise'],
+  bnoise:       ['bnoise'],
+  tpb:          ['tpb'],
   functionkeyword: ['gain', 'adsr', 'dyn', 'dist', 'filter', 'delay', 'flang', 'chorus', 'samp'],
-  o:          /o/,
-  x:          /x/,
-  at:         /@/,
-  lparen:     /\(/,
-  rparen:     /\)/,
-  lbrack:     /\[/,
-  rbrack:     /\]/,
-  pipe:       /\|/,
-  add:        /\+/,
-  mult:       /\*/,
-  div:        /\//,
-  dot:        /\./,
-  assign:     /\->/,
-  bindr:      /\>>/,
-  bindl:      /\<</,
-  ampmore:    /\(\(/,
-  ampless:    /\)\)/,
-  silence:    /\!/,
-  transpmore: /\+/,
-  underscore: /\_/,
-  hash:       /\#/,
-  hyphen:     /\-/,
-  ndash:      /\–/,
-  mdash:      /\—/,
-  comma:      /\,/,
-  colon:      /\:/,
-  semicolon:  /\;/,
-  split:      /\<:/,
-  merge:      /\:>/,
-  tilde:      /\~/,
+  o:            /o/,
+  x:            /x/,
+  at:           /@/,
+  lparen:       /\(/,
+  rparen:       /\)/,
+  lbrack:       /\[/,
+  rbrack:       /\]/,
+  pipe:         /\|/,
+  add:          /\+/,
+  mult:         /\*/,
+  div:          /\//,
+  dot:          /\./,
+  assign:       /\->/,
+  bindr:        /\>>/,
+  bindl:        /\<</,
+  ampmore:      /\(\(/,
+  ampless:      /\)\)/,
+  silence:      /\!/,
+  transpmore:   /\+/,
+  underscore:   /\_/,
+  hash:         /\#/,
+  hyphen:       /\-/,
+  ndash:        /\–/,
+  mdash:        /\—/,
+  comma:        /\,/,
+  colon:        /\:/,
+  semicolon:    /\;/,
+  split:        /\<:/,
+  merge:        /\:>/,
+  tilde:        /\~/,
   functionname: /[a-zA-Z][a-zA-Z0-9]*/,
-  number: /[-+]?[0-9]*\.?[0-9]+/,
-  ws: {match: /\s+/, lineBreaks: true}
+  number:       /[-+]?[0-9]*\.?[0-9]+/,
+  ws:   {match: /\s+/, lineBreaks: true}
 });
 %}
 
@@ -61,7 +61,7 @@ main -> _ Statement _                                         {% d => ({ "@lang"
 Statement ->
       Expression _ %semicolon _ Statement                     {% d => [{ "@spawn": d[0] }].concat(d[4]) %}
       | Expression ( _ %semicolon ):?                         {% d => [{ "@spawn": d[0] }] %}
-      | %hash . "\n"                                          {% d => ({ "comment": d[3] }) %}
+      | %hash . "\n"                                          {% d => ({ "@comment": d[3] }) %}
 
 Expression ->
       Loop                                                    {% d => ({ "@loop": d[0] }) %}
@@ -103,7 +103,7 @@ Function ->
       | Oscillator _ Params                                   {% d => Object.assign({}, d[0], { param: d[2]}) %}
 
 Oscillator ->
-    %osc _ Sinewave                                           {% d => ({ "@osc": "sin" }) %}
+    %osc _ Sinewave                                           {% d => ({ "@osc": "@sin" }) %}
     | %osc _ Coswave                                          {% d => ({ "@osc": "@cos" }) %}
     | %osc _ Phasor                                           {% d => ({ "@osc": "@pha" }) %}
     | %osc _ Saw                                              {% d => ({ "@osc": "@saw" }) %}
