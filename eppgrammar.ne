@@ -127,8 +127,6 @@ Noise -> %wnoise                                              {% d => [{ "@wnois
 Params -> %lbrack _ %number:+ _ %rbrack                       {% d => console.log(d[2])  %}
       | %number                                               {% d => parseInt(d[0]) %}
 
-
-
 # Whitespace
 
 _  -> wschar:*                                                {% function(d) {return null;} %}
