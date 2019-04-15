@@ -66,34 +66,34 @@ const lexer = moo.compile({
 
 main -> ( _ Statement _ ):+                                   {% d => ({ "☺++" : d[1] })  %}
 
-Statement -> Expressions
-      | Declaration
-      | Import
-      | Comment
+Statement -> Expressions                                      {% id %}
+          | Declaration                                       {% id %}
+          | Import                                            {% id %}
+          | Comment                                           {% id %}
 
 Declaration -> %let %functionname %dquote .:* %dquote         {% id %}
 Import -> %import %lparen %functionname %rparen               {% id %}
 Comment -> %hash .:* "\n"                                     {% d => ({ "☺comment": d[3] }) %}
 
-Expressions -> Expression _ %semicolon _ Statement            {% d => [{ "☺spawn": d[0] }].concat(d[4]) %}
+Expressions ->
+      Expression _ %semicolon _ Expressions                   {% d => [{ "☺spawn": d[0] }].concat(d[4]) %}
       | Expression ( _ %semicolon ):?                         {% d => [{ "☺spawn": d[0] }] %}
-      | %hash . "\n"                                          {% d => ({ "☺comment": d[3] }) %}
 
 Expression ->
       Loop                                                    {% d => ({ "☺loop": d[0] }) %}
       | Beats                                                 {% d => ({ "☺beats": d[0] }) %}
-      | Synth                                                 {% d => ({ "☺synth": d[0] }) %}
       | Tempo                                                 {% id %}
+      | Synth                                                 {% d => ({ "☺synth": d[0] }) %}
 
 Tempo -> %tpb _ %number                                       {% d => ({ "☺tpb": parseInt(d[2]) }) %}
 
 Beats -> Beat:+                                               {% d => [ d[0].join() ] %}
 
 Beat ->
-    Rest                                                      {% id %}
-    | Hat                                                     {% id %}
-    | Snare                                                   {% id %}
-    | Kick                                                    {% id %}
+      Rest                                                    {% id %}
+      | Hat                                                   {% id %}
+      | Snare                                                 {% id %}
+      | Kick                                                  {% id %}
 
 Rest -> %dot                                                  {% id %}
 Hat -> %hyphen                                                {% id %}
@@ -102,14 +102,15 @@ Kick -> %x                                                    {% id %}
 
 Loop -> "[" Beats "]"                                         {% d => ( d[1] ) %}
 
-Synth -> Effects _ %colon _ Function                          {% d => ({ "@fx": d[0], "@func": d[4] }) %}
-      | Function                                              {% d => ({ "@func": d[0] }) %}
+Synth ->
+      SignalFunction _ %semicolon _ SignalFunctions;          {% d => ({ "@fx": d[0], "@func": d[4] }) %}
+      | SignalFunction                                        {% d => ({ "@func": d[0] }) %}
 
-Effects -> %functionkeyword _ Params _ %colon _ Effects       {% d => [ Object.assign({}, {type:d[0].value} , { param: d[2]}) ].concat(d[6]) %}
-        | %functionkeyword _ Params                           {% d => ( Object.assign({}, {type:d[0].value}, { param: d[2]} )) %}
+SignalFunctions ->
 
-Function ->
-      Oscillator _ %lparen _ Function _ %rparen               {% d => ({ "@comp": [d[0]].concat(d[4])}) %}
+
+SignalFunction ->
+      Oscillator _ %lparen _ SignalFunctions _ %rparen               {% d => ({ "@comp": [d[0]].concat(d[4])}) %}
       | Oscillator _ Params _ %add _ Function                 {% d => [{ "@add": [ Object.assign({}, d[0], { param: d[2]}) ].concat(d[6])}] %}
       | Oscillator _ Params _ %mult _ Function                {% d => [{ "@mul": [ Object.assign({}, d[0], { param: d[2]}) ].concat(d[6])}] %}
       | Oscillator _ Params _ %hyphen _ Function              {% d => [{ "@sub": [ Object.assign({}, d[0], { param: d[2]}) ].concat(d[6])}] %}
@@ -117,11 +118,13 @@ Function ->
       | Oscillator _ Params                                   {% d => Object.assign({}, d[0], { param: d[2]}) %}
 
 # Composition Operators
-Combinators -> Sequential
+Composition ->
+            Recursive
             | Parallel
-            | Recursive
+            | Sequential
             | Split
             | Merge
+
 
 Oscillator ->  %osc _ OscillatorType %lbrack _ Params _ %rbrack
             |  %osc %lbrack _ OscillatorType %comma Params _ %rbrack
@@ -137,7 +140,6 @@ OscillatorType -> Sinewave                                    {% d => ({ "@type"
                 | Noise                                       {% id %}
 
 Sinewave -> %sinosc                                           {% id %}
-          | %sinosc                                           {% id %}
 
 Coswave -> %cososc                                            {% id %}
 Coswave -> %cososc                                            {% id %}
@@ -156,8 +158,12 @@ Noise -> %wnoise                                              {% d => [{ "@wnois
       |  %pnoise                                              {% d => [{ "@pnoise" : d[0] }] %}
       |  %bnoise                                              {% d => [{ "@bnoise" : d[0] }] %}
 
-Params -> %number _ Params                                    {% d => return [ { parseFloat(d[0]) + d[2]  %}
+Params -> %number _ Params                                    {% d => return [ { parseFloat(d[0]) + d[2] }  %}
       | null                                                  {% d => parseFloat(d[0]) %}
+
+Effects -> %functionkeyword _ Params _ %colon _ Effects       {% d => [ Object.assign({}, {type:d[0].value} , { param: d[2]}) ].concat(d[6]) %}
+        | %functionkeyword _ Params                           {% d => ( Object.assign({}, {type:d[0].value}, { param: d[2]} )) %}
+
 
 # Whitespace
 
