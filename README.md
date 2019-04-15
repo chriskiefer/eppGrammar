@@ -1,4 +1,4 @@
-# eppgrammar
+# eppGrammar
 
 
 Compile eppgrammar files to a JavaScript module
