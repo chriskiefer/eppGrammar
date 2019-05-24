@@ -72,7 +72,9 @@ Statement -> Expressions                                      {% id %}
           | Comment                                           {% id %}
 
 Declaration -> %let %functionname %dquote .:* %dquote         {% id %}
+
 Import -> %import %lparen %functionname %rparen               {% id %}
+
 Comment -> %hash .:* "\n"                                     {% d => ({ "☺comment": d[3] }) %}
 
 Expressions ->
@@ -109,15 +111,8 @@ Synth ->
 SignalFunctions ->
 
 
-SignalFunction ->
-      Oscillator _ %lparen _ SignalFunctions _ %rparen               {% d => ({ "@comp": [d[0]].concat(d[4])}) %}
-      | Oscillator _ Params _ %add _ Function                 {% d => [{ "@add": [ Object.assign({}, d[0], { param: d[2]}) ].concat(d[6])}] %}
-      | Oscillator _ Params _ %mult _ Function                {% d => [{ "@mul": [ Object.assign({}, d[0], { param: d[2]}) ].concat(d[6])}] %}
-      | Oscillator _ Params _ %hyphen _ Function              {% d => [{ "@sub": [ Object.assign({}, d[0], { param: d[2]}) ].concat(d[6])}] %}
-      | Oscillator _ Params _ %div _ Function                 {% d => [{ "@div": [ Object.assign({}, d[0], { param: d[2]}) ].concat(d[6])}] %}
-      | Oscillator _ Params                                   {% d => Object.assign({}, d[0], { param: d[2]}) %}
 
-# Composition Operators
+# Composition Operators with Priorities {4,3,2,1,1} and Associativity {left, right, right, right, right }
 Composition ->
             Recursive
             | Parallel
@@ -125,9 +120,23 @@ Composition ->
             | Split
             | Merge
 
+# Recursive ->
+# Sequential ->
+# Split ->
+# Merge ->
+
+SignalFunction ->
+      Oscillator _         {% d => ({ "@comp": [d[0]].concat(d[4])}) %}
+      | Oscillator _ Params _ %add _ Function                 {% d => [{ "@add": [ Object.assign({}, d[0], { param: d[2]}) ].concat(d[6])}] %}
+      | Oscillator _ Params _ %mult _ Function                {% d => [{ "@mul": [ Object.assign({}, d[0], { param: d[2]}) ].concat(d[6])}] %}
+      | Oscillator _ Params _ %hyphen _ Function              {% d => [{ "@sub": [ Object.assign({}, d[0], { param: d[2]}) ].concat(d[6])}] %}
+      | Oscillator _ Params _ %div _ Function                 {% d => [{ "@div": [ Object.assign({}, d[0], { param: d[2]}) ].concat(d[6])}] %}
+      | Oscillator _ Params                                   {% d => Object.assign({}, d[0], { param: d[2]}) %}
+
+
 
 Oscillator ->  %osc _ OscillatorType %lbrack _ Params _ %rbrack
-            |  %osc %lbrack _ OscillatorType %comma Params _ %rbrack
+            |  %osc %lparen _ OscillatorType %comma Params _ %rparen
 
 # OscillatorType is based on Maximilian's maxiOsc
 OscillatorType -> Sinewave                                    {% d => ({ "@type": "@sin" }) %}
@@ -142,24 +151,20 @@ OscillatorType -> Sinewave                                    {% d => ({ "@type"
 Sinewave -> %sinosc                                           {% id %}
 
 Coswave -> %cososc                                            {% id %}
-Coswave -> %cososc                                            {% id %}
-Phasor -> %phasosc                                            {% id %}
 Phasor -> %phasosc                                            {% id %}
 Saw -> %sawosc                                                {% id %}
-Saw -> %sawosc                                                {% id %}
-Triangle -> %triosc                                           {% id %}
 Triangle -> %triosc                                           {% id %}
 Square -> %squareosc                                          {% id %}
-Square -> %squareosc                                          {% id %}
-Pulse -> %pulseosc                                            {% id %}
 Pulse -> %pulseosc                                            {% id %}
 
 Noise -> %wnoise                                              {% d => [{ "@wnoise" : d[0] }] %}
       |  %pnoise                                              {% d => [{ "@pnoise" : d[0] }] %}
       |  %bnoise                                              {% d => [{ "@bnoise" : d[0] }] %}
 
-Params -> %number _ Params                                    {% d => return [ { parseFloat(d[0]) + d[2] }  %}
-      | null                                                  {% d => parseFloat(d[0]) %}
+Params ->
+      null                                                    {% id %}
+      | %number _ Params                                      {% d => return [parseFloat(d[0])].join(d[2])  %}
+
 
 Effects -> %functionkeyword _ Params _ %colon _ Effects       {% d => [ Object.assign({}, {type:d[0].value} , { param: d[2]}) ].concat(d[6]) %}
         | %functionkeyword _ Params                           {% d => ( Object.assign({}, {type:d[0].value}, { param: d[2]} )) %}
